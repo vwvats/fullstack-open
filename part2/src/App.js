@@ -7,11 +7,30 @@ import Persons from "./Persons";
 // EXTRA CREDIT
 import CountrySearch from "./CountrySearch";
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
+
+  const notificationStyles = {
+    color: "green",
+    background: "lightgrey",
+    fontSize: 20,
+    borderStyle: "solid",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  };
+
+  return <div style={notificationStyles}>{message}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [filterQuery, setFilterQuery] = useState("");
+  const [message, setMessage] = useState(null);
 
   const fetchContacts = () => {
     phonebookService
@@ -39,7 +58,17 @@ const App = () => {
         };
         phonebookService
           .updateContact(persons[oldContactIndex].id, updatedContact)
-          .then(() => fetchContacts());
+          .then(() => {
+            fetchContacts();
+            setMessage(`${updatedContact.name}'s phone updated`);
+            setTimeout(() => setMessage(null), 3000);
+          })
+          .catch(() => {
+            setMessage(
+              `${updatedContact.name} has already been removed from server`
+            );
+            setTimeout(() => setMessage(null), 3000);
+          });
       }
     } else {
       phonebookService
@@ -54,6 +83,8 @@ const App = () => {
             ...persons,
             { name: data.name, number: data.number, id: data.id },
           ]);
+          setMessage(`${data.name} successfully added!`);
+          setTimeout(() => setMessage(null), 3000);
         });
     }
     setNewName("");
@@ -63,6 +94,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <FilterPhoneBook
         value={filterQuery}
         onQuery={(e) => setFilterQuery(e.target.value)}
