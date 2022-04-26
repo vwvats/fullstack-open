@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import phonebookService from "./phonebookService";
 import FilterPhoneBook from "./FilterPhonebook";
 import PhonebookForm from "./PhonebookForm";
 import Persons from "./Persons";
@@ -13,22 +13,51 @@ const App = () => {
   const [newPhone, setNewPhone] = useState("");
   const [filterQuery, setFilterQuery] = useState("");
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
+  const fetchContacts = () => {
+    phonebookService
+      .getAllContacts()
       .then((response) => setPersons(response.data));
+  };
+
+  useEffect(() => {
+    fetchContacts();
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const isPresent = (personObj) => personObj.name === newName;
     if (persons.some(isPresent)) {
-      alert(`${newName} is already added to the phonebook`);
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace old number with this new one?`
+        )
+      ) {
+        const oldContactIndex = persons.findIndex(isPresent);
+        const updatedContact = {
+          ...persons[oldContactIndex],
+          number: newPhone,
+        };
+        phonebookService
+          .updateContact(persons[oldContactIndex].id, updatedContact)
+          .then(() => fetchContacts());
+      }
     } else {
-      setPersons([...persons, { name: newName, number: newPhone }]);
-      setNewName("");
-      setNewPhone("");
+      phonebookService
+        .createContact({
+          name: newName,
+          number: newPhone,
+          id: Math.random() * Math.random(),
+        })
+        .then((response) => {
+          const data = response.data;
+          setPersons([
+            ...persons,
+            { name: data.name, number: data.number, id: data.id },
+          ]);
+        });
     }
+    setNewName("");
+    setNewPhone("");
   };
 
   return (
@@ -47,7 +76,11 @@ const App = () => {
         handleSubmit={handleSubmit}
       />
       <h2>Numbers</h2>
-      <Persons phonebook={persons} filterQuery={filterQuery} />
+      <Persons
+        phonebook={persons}
+        filterQuery={filterQuery}
+        handleDelete={fetchContacts}
+      />
       <CountrySearch />
     </div>
   );
