@@ -25,7 +25,7 @@ const App = () => {
     if (persons.some(isPresent)) {
       alert(`${newName} is already added to the phonebook`);
     } else {
-      setPersons([...persons, { name: newName, phone: newPhone }]);
+      setPersons([...persons, { name: newName, number: newPhone }]);
       setNewName("");
       setNewPhone("");
     }
