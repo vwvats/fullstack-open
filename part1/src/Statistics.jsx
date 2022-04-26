@@ -8,7 +8,7 @@ const StatisticLine = ({ text, value }) => (
 const Statistics = ({ good, neutral, bad }) => {
   return (
     <>
-      <h2>statistics</h2>
+      <h2>Statistics</h2>
       {good > 0 || neutral > 0 || bad > 0 ? (
         <table>
           <tbody>
