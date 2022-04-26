@@ -19,12 +19,14 @@ const App = () => {
     }
   };
 
+  const StatButton = ({ text, clickMe }) => <button onClick={clickMe}>{text}</button>;
+
   return (
     <div>
       <h2>give feedback</h2>
-      <button onClick={handleClick("good")}>Good</button>
-      <button onClick={handleClick("neutral")}>Neutral</button>
-      <button onClick={handleClick("bad")}>Bad</button>
+      <StatButton text="Good" clickMe={handleClick("good")} />
+      <StatButton text="Neutral" clickMe={handleClick("neutral")} />
+      <StatButton text="Bad" clickMe={handleClick("bad")} />
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   );
