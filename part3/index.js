@@ -4,6 +4,8 @@ const phonebook = require("./data.js");
 const app = express();
 const PORT = 3001;
 
+app.use(express.json());
+
 app.get("/info", (request, response) => {
   const numberOfPeople = phonebook.length;
   const time = new Date();
@@ -16,6 +18,23 @@ app.get("/info", (request, response) => {
 
 app.get("/api/persons", (request, response) => {
   response.json(phonebook);
+});
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: "content missing",
+    });
+  }
+  if (phonebook.filter(contact => contact.name === body.name).length > 0) {
+    return response.status(400).json({
+      error: "name already in the phonebook",
+    });
+  }
+  const contact = { ...body, id: Math.random() * Math.random() };
+  phonebook = phonebook.concat(contact);
+  response.json(contact);
 });
 
 app.get("/api/persons/:id", (request, response) => {
