@@ -18,6 +18,16 @@ app.get("/api/persons", (request, response) => {
   response.json(phonebook);
 });
 
+app.get("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const contact = phonebook.find(contact => contact.id === id);
+  if (contact) {
+    response.send(contact);
+  } else {
+    response.send(`The id ${id} did not match any contact.`);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
