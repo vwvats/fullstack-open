@@ -1,10 +1,12 @@
 const express = require("express");
+const morgan = require("morgan");
 const phonebook = require("./data.js");
 
 const app = express();
 const PORT = 3001;
 
 app.use(express.json());
+app.use(morgan("tiny"));
 
 app.get("/info", (request, response) => {
   const numberOfPeople = phonebook.length;
