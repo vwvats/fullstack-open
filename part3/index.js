@@ -20,12 +20,18 @@ app.get("/api/persons", (request, response) => {
 
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
-  const contact = phonebook.find(contact => contact.id === id);
+  const contact = phonebook.find((contact) => contact.id === id);
   if (contact) {
-    response.send(contact);
+    response.json(contact);
   } else {
     response.send(`The id ${id} did not match any contact.`);
   }
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  phonebook = phonebook.filter((note) => note.id !== id);
+  response.status(204).end();
 });
 
 app.listen(PORT, () => {
