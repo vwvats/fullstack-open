@@ -75,7 +75,6 @@ const App = () => {
         .createContact({
           name: newName,
           number: newPhone,
-          id: Math.random() * Math.random(),
         })
         .then((response) => {
           const data = response.data;
