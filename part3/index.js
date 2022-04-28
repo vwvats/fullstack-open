@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require('cors');
 
-const phonebook = require("./data.js");
+let phonebook = require("./data.js");
 
 const app = express();
 const PORT = 3001;
