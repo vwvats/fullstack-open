@@ -40,7 +40,7 @@ app.get("/api/persons", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-// add a contact to DB (including duplicates)
+// add a contact to DB
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
   if (!body.name || !body.number) {
@@ -63,7 +63,7 @@ app.post("/api/persons", (request, response, next) => {
   // }
 });
 
-// fetch a contact by ID from DB
+// fetch a specific contact from DB
 app.get("/api/persons/:id", (request, response, next) => {
   Contact.findById(request.params.id)
     .then((contact) => {
@@ -76,12 +76,23 @@ app.get("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-// delete a contact from DB
-app.delete("/api/persons/:id", (request, response) => {
-  Contact.findByIdAndRemove(request.params.id).then((result) => {
-    response.status(204).end();
-  })
-  .catch(error => next(error));
+// update a specific contact in DB
+app.put("/api/persons/:id", (request, response, next) => {
+  const updatedContact = { ...request.body };
+  Contact.findByIdAndUpdate(request.params.id, updatedContact, { new: true })
+    .then((updated) => {
+      response.json(updated);
+    })
+    .catch((error) => next(error));
+});
+
+// delete a spcific contact from DB
+app.delete("/api/persons/:id", (request, response, next) => {
+  Contact.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 app.use(errorHandler);
