@@ -1,4 +1,3 @@
-// @eslint-ignore -no-unused-vars
 const dummy = (blogs) => { // eslint-disable-line
   return 1
 }
@@ -41,9 +40,22 @@ const mostBlogs = (blogs) => {
   return { author: maxAuthor, blogs: maxCount }
 }
 
+const mostLikes = (blogs) => {
+  let likes = 0
+  let index
+  blogs.forEach((blog, idx) => {
+    if (blog.likes > likes) {
+      likes = blog.likes
+      index = idx
+    }
+  })
+  return { author: blogs[index].author, likes: blogs[index].likes }
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
