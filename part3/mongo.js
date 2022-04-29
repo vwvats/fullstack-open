@@ -1,3 +1,4 @@
+// helper file to add and fetch data from DB
 const mongoose = require("mongoose");
 
 // prompt for password if not entered
