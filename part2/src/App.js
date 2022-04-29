@@ -84,7 +84,8 @@ const App = () => {
           ]);
           setMessage(`${data.name} successfully added!`);
           setTimeout(() => setMessage(null), 3000);
-        });
+        })
+        .catch(error => setMessage(error.message));
     }
     setNewName("");
     setNewPhone("");

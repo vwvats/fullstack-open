@@ -38,11 +38,6 @@ app.get("/api/persons", (request, response, next) => {
 // add a contact to DB
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
-  if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: "content missing",
-    });
-  }
   const contact = new Contact({ ...body });
   contact
     .save()
@@ -50,12 +45,6 @@ app.post("/api/persons", (request, response, next) => {
       response.json(savedContact);
     })
     .catch((error) => next(error));
-  // IMPLEMENT LATER - check whether contact exists
-  // if (phonebook.filter((contact) => contact.name === body.name).length > 0) {
-  //   return response.status(400).json({
-  //     error: "name already in the phonebook",
-  //   });
-  // }
 });
 
 // fetch a specific contact from DB
@@ -73,8 +62,12 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 // update a specific contact in DB
 app.put("/api/persons/:id", (request, response, next) => {
-  const updatedContact = { ...request.body };
-  Contact.findByIdAndUpdate(request.params.id, updatedContact, { new: true })
+  const { name, number } = request.body;
+  Contact.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: "query" }
+  )
     .then((updated) => {
       response.json(updated);
     })
