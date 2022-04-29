@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const errorHandler = require("./utils/errorHandler");
 const Contact = require("./models/contact");
 
 const app = express();
@@ -17,26 +18,30 @@ app.use(
 );
 app.use(cors());
 
-app.get("/info", (request, response) => {
-  Contact.find({}).then((result) => {
-    const time = new Date();
-    const responseString = `
+app.get("/info", (request, response, next) => {
+  Contact.find({})
+    .then((result) => {
+      const time = new Date();
+      const responseString = `
       Phonebook has info for ${result.length} people 
       ${time.toString()}
     `;
-    response.send(responseString);
-  });
+      response.send(responseString);
+    })
+    .catch((error) => next(error));
 });
 
 // fetch all contacts from DB
-app.get("/api/persons", (request, response) => {
-  Contact.find({}).then((result) => {
-    response.json(result);
-  });
+app.get("/api/persons", (request, response, next) => {
+  Contact.find({})
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
 // add a contact to DB (including duplicates)
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
   if (!body.name || !body.number) {
     return response.status(400).json({
@@ -44,9 +49,12 @@ app.post("/api/persons", (request, response) => {
     });
   }
   const contact = new Contact({ ...body });
-  contact.save().then((savedContact) => {
-    response.json(savedContact);
-  });
+  contact
+    .save()
+    .then((savedContact) => {
+      response.json(savedContact);
+    })
+    .catch((error) => next(error));
   // IMPLEMENT LATER - check whether contact exists
   // if (phonebook.filter((contact) => contact.name === body.name).length > 0) {
   //   return response.status(400).json({
@@ -56,18 +64,27 @@ app.post("/api/persons", (request, response) => {
 });
 
 // fetch a contact by ID from DB
-app.get("/api/persons/:id", (request, response) => {
-  Contact.findById(request.params.id).then((contact) => {
-    response.json(contact);
-  });
+app.get("/api/persons/:id", (request, response, next) => {
+  Contact.findById(request.params.id)
+    .then((contact) => {
+      if (contact) {
+        response.json(contact);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 // delete a contact from DB
 app.delete("/api/persons/:id", (request, response) => {
   Contact.findByIdAndRemove(request.params.id).then((result) => {
     response.status(204).end();
-  });
+  })
+  .catch(error => next(error));
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
