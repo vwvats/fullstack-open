@@ -1,8 +1,8 @@
-const morgan = require("morgan");
+const morgan = require('morgan')
 
 // custom token
-morgan.token("requestBody", (req, res) => JSON.stringify(req.body));
+morgan.token('requestBody', (req) => JSON.stringify(req.body))
 
 module.exports = morgan(
-  ":method :url :status :res[content-length] - :response-time ms :requestBody"
-);
+  ':method :url :status :res[content-length] - :response-time ms :requestBody'
+)
