@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-const morgan = require("morgan");
 const cors = require("cors");
+const logger = require("./utils/logger");
 const errorHandler = require("./utils/errorHandler");
 const Contact = require("./models/contact");
 
@@ -10,13 +10,8 @@ const PORT = process.env.PORT;
 
 app.use(express.static("build"));
 app.use(express.json());
-morgan.token("requestBody", (req, res) => JSON.stringify(req.body));
-app.use(
-  morgan(
-    ":method :url :status :res[content-length] - :response-time ms :requestBody"
-  )
-);
 app.use(cors());
+app.use(logger);
 
 app.get("/info", (request, response, next) => {
   Contact.find({})
