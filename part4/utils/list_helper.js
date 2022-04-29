@@ -6,7 +6,7 @@ const dummy = (blogs) => { // eslint-disable-line
 const totalLikes = (blogs) => {
   return blogs.reduce((totalLikes, currentBlog) => {
     return totalLikes + currentBlog.likes
-  })
+  }, 0)
 }
 
 module.exports = {
