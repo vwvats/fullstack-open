@@ -7,6 +7,7 @@ const Contact = require("./models/contact");
 const app = express();
 const PORT = process.env.PORT;
 
+app.use(express.static("build"));
 app.use(express.json());
 morgan.token("requestBody", (req, res) => JSON.stringify(req.body));
 app.use(
@@ -15,7 +16,6 @@ app.use(
   )
 );
 app.use(cors());
-app.use(express.static("build"));
 
 app.get("/info", (request, response) => {
   Contact.find({}).then((result) => {
@@ -64,8 +64,7 @@ app.get("/api/persons/:id", (request, response) => {
 
 // delete a contact from DB
 app.delete("/api/persons/:id", (request, response) => {
-  Contact.deleteOne({ _id: Object(request.params.id) }).then((result) => {
-    console.log(result);
+  Contact.findByIdAndRemove(request.params.id).then((result) => {
     response.status(204).end();
   });
 });
