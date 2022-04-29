@@ -63,10 +63,8 @@ const App = () => {
             setMessage(`${updatedContact.name}'s phone updated`);
             setTimeout(() => setMessage(null), 3000);
           })
-          .catch(() => {
-            setMessage(
-              `${updatedContact.name} has already been removed from server`
-            );
+          .catch((error) => {
+            setMessage(error.response.data.error);
             setTimeout(() => setMessage(null), 3000);
           });
       }
@@ -85,7 +83,10 @@ const App = () => {
           setMessage(`${data.name} successfully added!`);
           setTimeout(() => setMessage(null), 3000);
         })
-        .catch(error => setMessage(error.message));
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setTimeout(() => setMessage(null), 3000);
+        });
     }
     setNewName("");
     setNewPhone("");
