@@ -21,4 +21,14 @@ test('correct number of blogs are returned', async () => {
     })
 })
 
+test('each blog has an id property', async () => {
+  await api
+    .get('/api/blogs')
+    .then((response) => {
+      response.body.forEach((blog) => {
+        expect(blog.id).toBeDefined()
+      })
+    })
+})
+
 afterAll(() => mongoose.connection.close())
